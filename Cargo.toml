@@ -1,0 +1,12 @@
+[package]
+name = "charclass"
+version = "0.1.0"
+edition = "2021"
+description = "Library crate to handle unicode character classes"
+authors = ["Jan Max Meyer <jmm@phorward.de>"]
+repository = "https://github.com/phorward/charclass/"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
