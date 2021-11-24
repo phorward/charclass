@@ -1,7 +1,4 @@
-//! Handling of character-classes used by Token::Char and Token::Chars
-
-use std::cmp::Ordering;
-
+//! Character-classes
 type CharClassRange = std::ops::RangeInclusive<char>;
 
 /// Representation of a character-class
@@ -14,11 +11,6 @@ impl CharClass {
     /** Create new empty character class. */
     pub fn new() -> Self {
         Self { ranges: Vec::new() }
-    }
-
-    /** Internal function for sorting ranges. */
-    fn sort_ranges(&mut self) {
-        self.ranges.sort_by(|a, b| a.start().cmp(b.start()));
     }
 
     /** Retrieve total number of characters in class */
@@ -46,8 +38,9 @@ impl CharClass {
             prev_count = self.ranges.len();
 
             // First sort all ranges
-            self.sort_ranges();
+            self.ranges.sort_by(|a, b| a.start().cmp(b.start()));
 
+            // Then look for intersections
             for i in 0..self.ranges.len() - 1 {
                 let a = &self.ranges[i];
                 let b = &self.ranges[i + 1];
@@ -138,14 +131,14 @@ impl CharClass {
         self.ranges
             .binary_search_by(|r| {
                 if r.start() > range.end() {
-                    Ordering::Greater
+                    std::cmp::Ordering::Greater
                 } else if r.end() < range.start() {
-                    Ordering::Less
+                    std::cmp::Ordering::Less
                 } else {
                     if range.start() >= r.start() && range.end() <= r.end() {
-                        Ordering::Equal
+                        std::cmp::Ordering::Equal
                     } else {
-                        Ordering::Less // fixme: Is here also a Greater-case?
+                        std::cmp::Ordering::Less // fixme: Is here also a Greater-case?
                     }
                 }
             })
@@ -235,7 +228,7 @@ impl std::ops::AddAssign for CharClass {
     }
 }
 
-// Todo: A std::ops::Sub is not implemented yet but might be interesting ;)
+// todo: std::ops::Sub is not implemented yet but might be interesting ;)
 
 /** Character-class construction helper-macro
 
