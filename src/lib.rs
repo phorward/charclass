@@ -2,7 +2,7 @@
 type CharClassRange = std::ops::RangeInclusive<char>;
 
 /// Representation of a character-class
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Hash, Eq, PartialEq)]
 pub struct CharClass {
     ranges: Vec<CharClassRange>,
 }

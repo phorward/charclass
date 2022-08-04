@@ -1,8 +1,8 @@
 [package]
 name = "charclass"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
-description = "Library crate to handle unicode character classes"
+description = "Library crate to define and modify unicode character classes"
 authors = ["Jan Max Meyer <jmm@phorward.de>"]
 repository = "https://github.com/phorward/charclass/"
 license = "MIT"
