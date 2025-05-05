@@ -1,7 +1,7 @@
 [package]
 name = "charclass"
-version = "0.2.0"
-edition = "2021"
+version = "0.3.0"
+edition = "2024"
 description = "Library crate to define and modify unicode character classes"
 authors = ["Jan Max Meyer <jmm@phorward.de>"]
 repository = "https://github.com/phorward/charclass/"
