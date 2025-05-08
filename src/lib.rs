@@ -1,12 +1,12 @@
 //! Character-classes
-type CharClassRange = std::ops::RangeInclusive<char>;
+type Range = std::ops::RangeInclusive<char>;
 
 /// Representation of a character-class
 #[derive(Clone, Hash, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "serde", serde(transparent))]
 pub struct CharClass {
-    ranges: Vec<CharClassRange>,
+    ranges: Vec<Range>,
 }
 
 impl CharClass {
@@ -116,7 +116,7 @@ impl CharClass {
     }
 
     /** Add range to character class. */
-    pub fn add(&mut self, range: CharClassRange) -> u32 {
+    pub fn add(&mut self, range: Range) -> u32 {
         let len = self.len();
         self.ranges.push(range);
         self.normalize();
@@ -129,7 +129,7 @@ impl CharClass {
     }
 
     /** Test */
-    pub fn test(&self, range: &CharClassRange) -> bool {
+    pub fn test(&self, range: &Range) -> bool {
         self.ranges
             .binary_search_by(|r| {
                 if r.start() > range.end() {
