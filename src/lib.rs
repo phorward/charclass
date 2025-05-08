@@ -3,6 +3,8 @@ type CharClassRange = std::ops::RangeInclusive<char>;
 
 /// Representation of a character-class
 #[derive(Clone, Hash, Eq, PartialEq)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[cfg_attr(feature = "serde", serde(transparent))]
 pub struct CharClass {
     ranges: Vec<CharClassRange>,
 }
