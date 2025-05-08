@@ -15,21 +15,46 @@ impl CharClass {
         Self { ranges: Vec::new() }
     }
 
+    /** Create character-class using a predicate function.
+
+    ```
+    use charclass::CharClass;
+
+    let ccl = CharClass::new_with_predicate(|ch| char::is_uppercase(*ch));
+    assert_eq!(ccl.test(&('Ä'..='Ä')), true);
+    assert_eq!(ccl.test(&('ö'..='ö')), false);
+    ```
+    */
+    pub fn new_with_predicate<F>(predicate: F) -> Self
+    where
+        F: Fn(&char) -> bool,
+    {
+        let mut ranges = Vec::new();
+        let mut start = None;
+        let mut end = char::MIN;
+
+        for ch in char::MIN..=char::MAX {
+            if predicate(&ch) {
+                if start.is_none() {
+                    start = Some(ch);
+                }
+
+                end = ch;
+            } else if let Some(start_ch) = start {
+                ranges.push(start_ch..=end);
+                start = None;
+            }
+        }
+
+        Self { ranges } // Don't has to be normalized; Normalized by design.
+    }
+
     /** Retrieve total number of characters in class */
     pub fn len(&self) -> u32 {
         self.ranges
             .iter()
             .map(|r| *r.end() as u32 - *r.start() as u32 + 1)
             .sum()
-    }
-
-    /** Dump the character ranges */
-    pub fn dump(&self) {
-        println!("{:p} ranges={}", self, self.ranges.len());
-
-        for i in 0..self.ranges.len() {
-            println!("  {:?}", self.ranges[i]);
-        }
     }
 
     /** Normalize character-class by removing intersections and coherent ranges. */
@@ -260,7 +285,8 @@ macro_rules! charclass {
     };
 }
 
-pub fn ccl_test() {
+#[test]
+fn playground() {
     let mut ccl = CharClass::new();
     ccl.add('a'..='c');
     ccl.add('€'..='€');
@@ -268,11 +294,11 @@ pub fn ccl_test() {
     ccl.normalize();
     //ccl.dump();
     //ccl.negate();
-    ccl.dump();
+    println!("{:?}", ccl);
 
     //ccl.add('a'..='z');
     ccl.normalize();
-    ccl.dump();
+    println!("{:?}", ccl);
 
     for c in b'a'..=b'z' {
         let c = char::from(c);
@@ -287,5 +313,29 @@ pub fn ccl_test() {
     t.add('A'..='D');
 
     ccl += t;
-    ccl.dump();
+    println!("{:?}", ccl);
+}
+
+#[test]
+fn uppercase_test() {
+    let ccl = CharClass::new_with_predicate(|ch| char::is_uppercase(*ch));
+
+    println!("{:?}", ccl);
+    println!("{:?}", ccl.len());
+    println!("{:?}", ccl.ranges.len());
+
+    assert_eq!(ccl.test(&('Ä'..='Ä')), true);
+    assert_eq!(ccl.test(&('ö'..='ö')), false);
+}
+
+#[test]
+fn ascii_test() {
+    let ccl = CharClass::new_with_predicate(char::is_ascii_uppercase);
+
+    println!("{:?}", ccl);
+    println!("{:?}", ccl.len());
+    println!("{:?}", ccl.ranges.len());
+
+    assert_eq!(ccl.test(&('A'..='C')), true);
+    assert_eq!(ccl.test(&('a'..='c')), false);
 }
